@@ -1,0 +1,41 @@
+---
+title: "Wine Pairing Guide"
+author: "uniicecream"
+output: html_document
+runtime: shiny
+---
+
+```{r echo=FALSE,results='hide'}
+### Load data
+m.fw <- read.csv('http://people.fas.harvard.edu/~matthewklau/data/wine_food.csv')
+wine.col <- c('lightyellow','yellow','gold','lightblue','pink','red','darkred','black')
+food.col <- c('green','orange','tan','brown','white','blue','darkblue','white','red','brown','grey')
+
+```
+
+Choose wine or food:
+
+```{r echo=FALSE}
+selectInput('data','Food or Wine',c("All",rownames(m.fw),colnames(m.fw)))
+
+```
+
+```{r echo=FALSE,results='hide'}
+m <- m.fw
+if (input$data == 'All'){
+   m <- m.fw
+}else if (input$data %in% colnames(m)){
+   m[,colnames(m) == input$data] <- m.fw[,colnames(m.fw) == input$data]
+}else{
+   m[rownames(m) == input$data,] <- m.fw[rownames(m.fw) == input$data,]
+}
+
+```
+
+```{r echo=FALSE,fig.width=10,fig.height=7}
+
+renderPlot({
+plotweb(m,method='cca',col.low=wine.col,bor.col.low=wine.col,col.interaction='lightgrey',bor.col.interaction='lightgrey',col.high=food.col,bor.col.high=food.col)
+)}
+
+```
